@@ -1,6 +1,7 @@
 #include "ihm/mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -27,7 +28,7 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::reset(){
-    ui->grid->clear(ui->xSpin->value(), ui->ySpin->value());
+    ui->grid->reset(ui->xSpin->value(), ui->ySpin->value());
     ui->grid->showHeuristique(ui->showHeiristicCheck->isChecked());
     ui->grid->includeDiag(ui->enableDiagCheck->isChecked());
 }

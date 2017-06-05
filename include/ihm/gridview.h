@@ -48,7 +48,7 @@ protected:
 public slots:
     // should have done this in the Grid class
     void compute(const int sleepTime);//Node* begin=m_beginer, Node* end=m_end);
-    void clear(const int nbx, const int nby);
+    void reset(const int nbx, const int nby);
     void clean();
     void includeDiag(const bool b){m_grid.includeDiag(b);}
     void showHeuristique(const bool b){m_showHeuristique = b;repaint();}

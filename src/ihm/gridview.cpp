@@ -180,8 +180,8 @@ Node* GridView::getNodeFromMousePos(QPoint mPos){
 }
 
 
-void GridView::clear(const int nbx, const int nby){
-    m_grid.reset(nbx, nby);
+void GridView::reset(const int nbx, const int nby){
+    m_grid.newGrid(nbx, nby);
     m_beginer = m_grid.get(0,nby/2);
     m_end = m_grid.get(nbx-1,nby/2);
     repaint();
