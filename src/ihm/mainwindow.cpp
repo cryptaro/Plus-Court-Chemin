@@ -1,6 +1,7 @@
 #include "ihm/mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->butClear, SIGNAL(clicked(bool)), this, SLOT(clean()));
     connect(ui->butNew, SIGNAL(clicked(bool)), this, SLOT(reset()));
+
+    connect(ui->actionLoad, SIGNAL(triggered(bool)), this, SLOT(loadImage()));
 
     ui->grid->showHeuristique(ui->showHeiristicCheck->isChecked());
     ui->grid->includeDiag(ui->enableDiagCheck->isChecked());
@@ -42,4 +45,22 @@ void MainWindow::clean(){
 
 void MainWindow::launch(){
     ui->grid->compute(ui->timeSpin->value());
+}
+
+void MainWindow::loadImage(){
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Load model"), "",
+                                                    tr("Accepted files (*.jpg *.png *.ppm);; Jpeg file (*.JPG);;\
+                                                       PNG files (*.png *.PNG);; PPM file (*.ppm);; All Files (*)"));
+            if (fileName.isEmpty())
+            return;
+
+    QImage img(fileName);
+    for (int y = 0; y < img.height(); y++) {
+        QRgb* rgb = (QRgb*)img.scanLine(y); // Il faut que l'image soit en ARGB32 (je pense, voir la doc)
+        for (int x = 0; x < img.width(); x++) {
+            rgb[x] = qRgba(255 - qRed(rgb[x]), 255 - qGreen(rgb[x]), 255 - qBlue(rgb[x]), qAlpha(rgb[x]));
+        }
+    }
+    img.save("machin.png");
 }

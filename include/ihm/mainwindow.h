@@ -20,6 +20,8 @@ public slots:
     void clean();
     void launch();
 
+    void loadImage();
+
 private:
     Ui::MainWindow *ui;
 

@@ -253,6 +253,7 @@ p, li { white-space: pre-wrap; }
      <string>File</string>
     </property>
     <addaction name="actionNew_Grid"/>
+    <addaction name="actionLoad"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -268,6 +269,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionNew_Grid">
    <property name="text">
     <string>New Grid</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>load</string>
    </property>
   </action>
  </widget>
