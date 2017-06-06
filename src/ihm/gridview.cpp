@@ -7,6 +7,9 @@
 #include <topology/priorityfile.h>
 #include <time.h>
 
+#ifdef unix
+#include <unistd.h>
+#endif
 
 GridView::GridView(QWidget *parent) :
     QOpenGLWidget(parent), m_grid(30,30),m_maxCost(100000)
@@ -61,11 +64,10 @@ void GridView::paintEvent(QPaintEvent *e)
             const int posy = y*ySize;
             int cost = m_grid.get(x,y)->cout();
 
-            if(m_grid.get(x,y)==m_end && m_end->cout()<=0){
+            if(m_grid.get(x,y)==m_end ){//&& m_end->cout()<=0){
                 painter.fillRect(posx,posy,xSize,ySize, Qt::red);
                 painter.drawEllipse(QPoint(posx+xSize/2,posy+ySize/2),xSize/4,ySize/4);
-            }
-            if(m_grid.get(x,y)==m_beginer){
+            }else if(m_grid.get(x,y)==m_beginer){
                 painter.fillRect(posx,posy,xSize,ySize, Qt::green);
                 painter.drawEllipse(QPoint(posx+xSize/2,posy+ySize/2),xSize/4,ySize/4);
             }else if(cost == m_maxCost){
@@ -73,7 +75,7 @@ void GridView::paintEvent(QPaintEvent *e)
             }else if(m_grid.get(x,y)->inFilnalPath()){
                 painter.fillRect(posx,posy,xSize,ySize, QColor(50,200,50));
             }else if(m_grid.get(x,y)->inCloseList()){
-                painter.fillRect(posx,posy,xSize,ySize,Qt::red);
+                painter.fillRect(posx,posy,xSize,ySize,Qt::lightGray);
             }else if(m_grid.get(x,y)->inOpenList()){
                 painter.fillRect(posx,posy,xSize,ySize, Qt::blue);
             }
@@ -114,7 +116,11 @@ void GridView::compute(const int sleepTime)//Node *begin, Node *end)
     while (!file.empty()) {
         if(sleepTime>0){
             repaint();
+#ifdef WIN32
             Sleep(sleepTime);
+#else
+            usleep(sleepTime);
+#endif
         }
         Node* n = file.pop();
         if(m_end->x()==n->x() && m_end->y()==n->y()){
@@ -197,15 +203,26 @@ void GridView::mousePressEvent(QMouseEvent *e){
 }
 
 void GridView::mouseMoveEvent(QMouseEvent *e){
-    Qt::MouseButton but = e->button();
+    Qt::MouseButtons but = e->buttons();
     QPoint mousePos = getMousePosition();
     Node* node = getNodeFromMousePos(mousePos);
     if(node){
-        if(e->modifiers() & Qt::ControlModifier)
-            node->weight(0);
-        else
-            node->weight(m_maxCost);
-        repaint();
+        if(e->modifiers() & Qt::AltModifier){
+            if(but & Qt::LeftButton){
+                m_beginer = node;
+            }else if(but & Qt::RightButton){
+                m_end = node;
+            }
+            repaint();
+        }else{
+            if(but & Qt::LeftButton){
+                if(e->modifiers() & Qt::ControlModifier)
+                    node->weight(0);
+                else
+                    node->weight(m_maxCost);
+                repaint();
+            }
+        }
     }
 }
 
@@ -214,10 +231,21 @@ void GridView::mouseReleaseEvent(QMouseEvent *e){
     QPoint mousePos = getMousePosition();
     Node* node = getNodeFromMousePos(mousePos);
     if(node){
-        if(e->modifiers() & Qt::ControlModifier)
-            node->weight(0);
-        else
-            node->weight(m_maxCost);
-        repaint();
+        if(e->modifiers() & Qt::AltModifier){
+            if(but & Qt::LeftButton){
+                m_beginer = node;
+            }else if(but & Qt::RightButton){
+                m_end = node;
+            }
+            repaint();
+        }else{
+            if(but & Qt::LeftButton){
+                if(e->modifiers() & Qt::ControlModifier)
+                    node->weight(0);
+                else
+                    node->weight(m_maxCost);
+                repaint();
+            }
+        }
     }
 }
