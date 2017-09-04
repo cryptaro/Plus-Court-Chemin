@@ -1,4 +1,4 @@
-# PlusCourtChemin
+# Plus Court Chemin
 
 This programm offers an interface in Qt, to visualize the A* algorithm computation in real time.
 
